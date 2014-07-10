@@ -11,6 +11,7 @@
 // */
 package javajson;
 
+import com.google.common.collect.Multimap;
 import java.io.FileReader;
 import java.io.File;
 import com.google.gson.Gson;
@@ -20,8 +21,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ParseJsonFromFileOrUrl{
 
@@ -48,32 +51,54 @@ public class ParseJsonFromFileOrUrl{
     
     
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
         file = new File(FilePath);
         s = deserializeString(file);
         ArrayList<Data> yourArray = new Gson().fromJson(s, new TypeToken<List<Data>>() {
         }.getType());
-          System.out.println("Water Point Id - " + "Water Point Condition - " + "Community Village" + "\n");
-        System.out.println("******************************************************************" + "\n");
+
+System.out.print(yourArray);
+          //System.out.println("Water Point Id - " + "Water Point Condition - " + "Community Village" + "\n");
+       // System.out.println("******************************************************************" + "\n");
         for (int i = 0; i < yourArray.size(); i++) {
-            System.out.println((i+1)+") "+yourArray.get(i));
+            yourArray.get(i);
+            //System.out.println((i+1)+") "+yourArray.get(i));
+      
         }
-Data d=new Data();
+             Data d=new Data(); //instantiate Data class
+DataManipulation  dm=new DataManipulation(); //instantiate Data class   
+
+System.out.println("-------------------------Water Point and Condition------------------------ \n");
+Multimap<String, String> mymap=dm.sortedByAscendingFrequency(d.getWaterPointAndCommunity());
+//Multimap<String, String> mymap=d.getWaterPointAndCommunity();
+double totalbroken=(double) mymap.size();
+int broken;
+double brokenpercommunity;
+
+Set keySet = mymap.keySet( );  
+    Iterator keyIterator = keySet.iterator();
+    while( keyIterator.hasNext( ) ) {  
+        Object key = keyIterator.next();  
+        broken=(int)mymap.keys().count((String) key); //get count of each key
+        brokenpercommunity=broken /totalbroken *100.0; //get total broken as a percentage
+        System.out.print( "Community: " + key +"  Broken count:"+brokenpercommunity+ "\n" );
+    }
+System.out.println("--------------------------------------------------------------\n");
+
 System.out.println("----------------Functional Water Points-----------------------\n");
-System.out.println("\t\t\t"+d.getWaterPointsFunctional()+"\n");
+System.out.println("\t\t\t"+d.getWaterPointsCharacteristic("functioning")+"\n");
+System.out.println("--------------------------------------------------------------\n");
+
+System.out.println("----------------Broken Water Points-----------------------\n");
+System.out.println("\t\t\t"+d.getWaterPointsCharacteristic("broken")+"\n");
 System.out.println("--------------------------------------------------------------\n");
 
 System.out.println("----------------Number Of Water Points/Community-----------------------\n");
-//count values using a HashMap
-String[] stockArr = new String[d.getCommunitiesVillages().size()];
-stockArr = d.getCommunitiesVillages().toArray(stockArr);
-List<String> asList = Arrays.asList(stockArr);
-        Map<String, Integer> map= new HashMap<String, Integer>();
-        for(String s: stockArr){
-            map.put(s,Collections.frequency(asList,s));
-        }
-        System.out.println(map);
+System.out.println(dm.getDataMap(d.getCommunitiesVillages()));
 System.out.println("--------------------------------------------------------------\n");
-    }
+  
+    
+
+       }
 }
 

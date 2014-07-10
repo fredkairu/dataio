@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+import com.google.common.collect.*;
 /**
  *
  * @author paul-pc
@@ -22,6 +22,9 @@ public class Data implements Serializable {
     public static ArrayList<String> waterpointcondition = new ArrayList<>();
     public static ArrayList<String> waterpointids= new ArrayList<>();
      public static ArrayList<String> communityvillage= new ArrayList<>();
+    //private static HashMap<String, String> hmap= new HashMap<String, String>();
+  private static  Multimap<String, String> multimap = ArrayListMultimap.create();
+
 
     // Getters and setters are not required for this example.
     // GSON sets the fields directly using reflection.
@@ -31,13 +34,26 @@ public class Data implements Serializable {
         addWaterPointConditions(water_point_condition);
         addWaterPointIds(water_point_id);
         addCommunitiesVillages(communities_villages);
-        return  water_point_id + " - " + water_point_condition+ " - "+communities_villages+ "\n";
+        if(water_point_condition.equals("broken")){
+        addWaterPointAndCommunity(communities_villages,water_point_condition);
+        }
+        return   water_point_id + " - " + water_point_condition+ " - "+communities_villages+ "\n";
     }
     
     //add value of water point conditions to arraylist
     private void addWaterPointConditions(String waterpointcondition){
     Data.waterpointcondition.add(waterpointcondition);
     } 
+    
+//String value stored along with the key value in hash map
+    public void addWaterPointAndCommunity(String key,String value){
+         multimap.put(key,value);
+     }
+ //get community water points and their status
+    public Multimap<String, String> getWaterPointAndCommunity(){
+    return Data.multimap;
+}
+    
      //add value of water point conditions to arraylist
     private void addWaterPointIds(String waterpointids){
     Data.waterpointids.add(waterpointids);
@@ -64,39 +80,18 @@ public class Data implements Serializable {
     public String getwaterpointid(){
     return this.water_point_id;
     }
+    
 
-    public int getWaterPointsFunctional(){
+    public int getWaterPointsCharacteristic(String condition){
         int countfunctional=0;
     for (int i = 0; i < this.getWaterPointCondition().size(); i++) {
-         if(this.getWaterPointCondition().get(i).equals("functioning")){
+         if(this.getWaterPointCondition().get(i).equals(condition)){
          countfunctional++;
             }
                }
         return countfunctional;
     
     }
-    
-    public String getPopularElement(ArrayList<String> a)
-{
-  int count = 1, tempCount;
-  String popular = a.get(0);
-  String temp = "";
-  for (int i = 0; i < (a.size() - 1); i++)
-  {
-    a.set(i, a.get(i));
-    tempCount = 0;
-    for (int j = 1; j < a.size(); j++)
-    {
-      if (temp.equals(a.get(j)))
-        tempCount++;
-    }
-    if (tempCount > count)
-    {
-      popular = temp;
-      count = tempCount;
-    }
-  }
-  return popular;
-}
+
     
 }
